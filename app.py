@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 import openai
 
+openai.api_key = st.secrets["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"]
+
 st.set_page_config(page_title="My Translator", layout="wide", page_icon="📝")
 
 st.title("📝 My Translator")
