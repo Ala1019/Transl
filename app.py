@@ -7,8 +7,7 @@ model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
 
 response = openai.ChatCompletion.create(
     model=model,
-    messages=[{"role": "user", "content": prompt}]
-)
+    messages=[{"role": "user", "content": prompt}])
 
 
 # Set OpenAI API key from Streamlit secrets
