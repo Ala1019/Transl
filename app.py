@@ -1,14 +1,6 @@
-
 import streamlit as st
 import pandas as pd
 import openai
-
-model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
-
-response = openai.ChatCompletion.create(
-    model=model,
-    messages=[{"role": "user", "content": prompt}])
-
 
 # Set OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -35,17 +27,17 @@ st.subheader("Try a New Translation")
 
 input_text = st.text_area("Enter English text to translate", height=200)
 style = st.selectbox("Choose a style", ["Butrus al-Bustani", "al-Jahiz", "Mahmoud Shaker"])
+model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
 
 if st.button("Translate"):
     if not input_text.strip():
         st.warning("Please enter some text.")
     else:
-        prompt = f"""Translate the following English text into Arabic in the style of {style}:
-\n{input_text}"""
+        prompt = f"""Translate the following English text into Arabic in the style of {style}:\n\n{input_text}"""
         with st.spinner("Translating..."):
             try:
                 response = openai.ChatCompletion.create(
-                    model="gpt-4",
+                    model=model,
                     messages=[{"role": "user", "content": prompt}]
                 )
                 translated = response.choices[0].message.content.strip()
