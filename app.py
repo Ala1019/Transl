@@ -1,6 +1,8 @@
+
 import streamlit as st
 import pandas as pd
 import openai
+import os
 
 # Set OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -10,7 +12,11 @@ st.set_page_config(page_title="My Translator", layout="wide", page_icon="📝")
 st.title("📝 My Translator")
 
 # Load translations from CSV
-df = pd.read_csv("translations.csv")
+DATA_FILE = "translations.csv"
+if os.path.exists(DATA_FILE):
+    df = pd.read_csv(DATA_FILE)
+else:
+    df = pd.DataFrame(columns=["Title", "Source Text", "Style", "Model", "Translation"])
 
 st.subheader("Search Your Translations")
 
@@ -27,13 +33,16 @@ st.subheader("Try a New Translation")
 
 input_text = st.text_area("Enter English text to translate", height=200)
 style = st.selectbox("Choose a style", ["Butrus al-Bustani", "al-Jahiz", "Mahmoud Shaker"])
-model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
+model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"], index=0)
+title = st.text_input("Title for this translation (optional)")
 
 if st.button("Translate"):
     if not input_text.strip():
         st.warning("Please enter some text.")
     else:
-        prompt = f"""Translate the following English text into Arabic in the style of {style}:\n\n{input_text}"""
+        prompt = f"""Translate the following English text into Arabic in the style of {style}:
+
+{input_text}"""
         with st.spinner("Translating..."):
             try:
                 response = openai.ChatCompletion.create(
@@ -42,6 +51,19 @@ if st.button("Translate"):
                 )
                 translated = response.choices[0].message.content.strip()
                 st.success("Translation Complete:")
-                st.text_area("Your Translation", translated, height=200)
+                edited_translation = st.text_area("Edit your translation if needed", translated, height=200)
+
+                if st.button("Save Translation"):
+                    new_row = {
+                        "Title": title or "Untitled",
+                        "Source Text": input_text,
+                        "Style": style,
+                        "Model": model,
+                        "Translation": edited_translation
+                    }
+                    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+                    df.to_csv(DATA_FILE, index=False)
+                    st.success("Translation saved successfully!")
+
             except Exception as e:
                 st.error(f"Error: {e}")
