@@ -3,6 +3,14 @@ import streamlit as st
 import pandas as pd
 import openai
 
+model = st.selectbox("Choose a model", ["gpt-3.5-turbo", "gpt-4"])
+
+response = openai.ChatCompletion.create(
+    model=model,
+    messages=[{"role": "user", "content": prompt}]
+)
+
+
 # Set OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
