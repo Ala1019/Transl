@@ -3,13 +3,14 @@ import streamlit as st
 import pandas as pd
 import openai
 
+# Set OpenAI API key from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="My Translator", layout="wide", page_icon="📝")
 
 st.title("📝 My Translator")
 
-# Load data
+# Load translations from CSV
 df = pd.read_csv("translations.csv")
 
 st.subheader("Search Your Translations")
@@ -32,9 +33,8 @@ if st.button("Translate"):
     if not input_text.strip():
         st.warning("Please enter some text.")
     else:
-        prompt = f"""Translate the following English text into Arabic in the style of {style}:
-
-{input_text}"""
+        prompt = f"Translate the following English text into Arabic in the style of {style}:
+\n{input_text}"
         with st.spinner("Translating..."):
             try:
                 response = openai.ChatCompletion.create(
