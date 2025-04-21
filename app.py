@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import pandas as pd
 import sqlite3
@@ -8,41 +6,8 @@ import os
 
 # SQLite utility functions
 DB_FILE = "translations.db"
-# Initialize DB
-def init_db()
-
-# ✅ Excel Import – this runs once to populate the DB from Excel
-if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
-    df_excel = pd.read_excel("translations.xlsx")
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-
-    for _, row in df_excel.iterrows():
-        cursor.execute("""
-            INSERT INTO translations (title, source_text, style, model, translation, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (
-            row.get("title", "Untitled"),
-            row["source_text"],
-            row.get("style", ""),
-            row.get("model", ""),
-            row["translation"],
-            row.get("notes", ""),
-            row.get("status", "")
-        ))
-
-    conn.commit()
-    conn.close()
-
-    # علامة لمنع التكرار في المستقبل
-    with open("imported.flag", "w") as f:
-        f.write("done")
-
-# Initialize DB
-init_db()
 
 def init_db():
-
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("""
@@ -90,8 +55,36 @@ def remove_duplicates():
     conn.commit()
     conn.close()
 
-# Initialize DB
+# ✅ Excel Import – this runs once to populate the DB from Excel
+if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
+    df_excel = pd.read_excel("translations.xlsx")
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    for _, row in df_excel.iterrows():
+        cursor.execute("""
+            INSERT INTO translations (title, source_text, style, model, translation, notes, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            row.get("title", "Untitled"),
+            row["source_text"],
+            row.get("style", ""),
+            row.get("model", ""),
+            row["translation"],
+            row.get("notes", ""),
+            row.get("status", "")
+        ))
+
+    conn.commit()
+    conn.close()
+
+    # منع التكرار لاحقًا
+    with open("imported.flag", "w") as f:
+        f.write("done")
+
+# ✅ الآن استدعاء دالة الإنشاء بعد تعريفها
 init_db()
+
 
 # OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
