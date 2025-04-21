@@ -74,9 +74,9 @@ Here is the text to translate:
 {input_text}
 """
         else:
-            prompt = f"Translate the following English text into Arabic in the style of {style}:
+            prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
-{input_text}"
+{input_text}"""
 
         with st.spinner("يتم الترجمة..."):
             try:
