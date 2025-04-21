@@ -42,6 +42,20 @@ def save_translation(title, source_text, style, model, translation, notes, statu
     conn.commit()
     conn.close()
 
+def remove_duplicates():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("""
+        DELETE FROM translations
+        WHERE id NOT IN (
+            SELECT MIN(id)
+            FROM translations
+            GROUP BY title, source_text, translation
+        )
+    """)
+    conn.commit()
+    conn.close()
+
 # Initialize DB
 init_db()
 
