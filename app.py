@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import sqlite3
@@ -78,13 +79,11 @@ if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
     conn.commit()
     conn.close()
 
-    # منع التكرار لاحقًا
     with open("imported.flag", "w") as f:
         f.write("done")
 
-# ✅ الآن استدعاء دالة الإنشاء بعد تعريفها
+# Initialize DB
 init_db()
-
 
 # OpenAI API key
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -96,13 +95,11 @@ st.title("📘 مترجمي الشخصي – SQLite")
 # Load and display previous translations
 st.subheader("🔎 أرشيف الترجمات")
 query = st.text_input("ابحث في الترجمات")
-st.subheader("🔎 أرشيف الترجمات")
 
 if st.button("🧽 إزالة التكرارات"):
     remove_duplicates()
     st.success("✔️ تم حذف التكرارات من قاعدة البيانات.")
     st.rerun()
-
 
 df = load_translations()
 if query:
@@ -143,9 +140,9 @@ Translate the following English text into Arabic using this style:
 {input_text}
 """
         else:
-            prompt = f"""Translate the following English text into Arabic in the style of {style}:
+            prompt = f"Translate the following English text into Arabic in the style of {style}:
 
-{input_text}"""
+{input_text}"
 
         with st.spinner("يتم الترجمة..."):
             try:
@@ -159,7 +156,6 @@ Translate the following English text into Arabic using this style:
             except Exception as e:
                 st.error(f"حدث خطأ: {e}")
 
-# Show translation output if available
 if "last_translation" in st.session_state:
     st.subheader("📄 الترجمة الأخيرة:")
     edited = st.text_area("حرر الترجمة إن شئت:", st.session_state["last_translation"], height=200)
