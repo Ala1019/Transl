@@ -31,14 +31,33 @@ st.subheader("✍️ تجربة ترجمة جديدة")
 
 title = st.text_input("🔖 عنوان الترجمة")
 input_text = st.text_area("النص الإنكليزي", height=200)
-style = st.selectbox("اختر الأسلوب", ["Butrus al-Bustani", "al-Jahiz", "Mahmoud Shaker", "أسلوبي الشخصي"])
+style = st.selectbox("اختر الأسلوب", ["Butrus al-Bustani", "al-Jahiz", "Mahmoud Shaker", "أسلوبي الشخصي", "أسلوبي الحقيقي"])
 model = st.selectbox("اختر النموذج", ["gpt-3.5-turbo", "gpt-4"], index=0)
 
 if st.button("ترجم"):
     if not input_text.strip():
         st.warning("الرجاء إدخال النص.")
     else:
-        if style == "أسلوبي الشخصي":
+        if style == "أسلوبي الحقيقي":
+            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+
+This style is defined by:
+
+- Elevated and classical Arabic language, free from modern journalistic clichés.
+- Preference for original Arabic syntax, beginning with the verb where natural.
+- Long, rhetorically rich sentences balanced by cadence and logic.
+- Imagery-driven narration: metaphor and simile are built progressively and end with poetic force.
+- Diction inspired by early 20th-century Arab stylists such as Taha Hussein, Mahmoud Shaker, and Butrus al-Bustani.
+- Philosophical and reflective tone; avoids sensationalism and overstatement.
+- Sensitive to historical analogy, metaphorical layering, and the connotations of both source and target languages.
+- Avoids literal translation when it fails to preserve the author’s tone and subtext.
+- Audience: highly literate Arabic readers.
+
+Translate the following English text into Arabic using this style:
+
+{input_text}
+"""
+        elif style == "أسلوبي الشخصي":
             prompt = f"""You are a professional translator. Translate the following English text into Arabic using the user’s personal style, which is defined as follows:
 
 - Language: Elevated, literary, rooted in classical Arabic.
@@ -55,9 +74,9 @@ Here is the text to translate:
 {input_text}
 """
         else:
-            prompt = f"""Translate the following English text into Arabic in the style of {style}:
+            prompt = f"Translate the following English text into Arabic in the style of {style}:
 
-{input_text}"""
+{input_text}"
 
         with st.spinner("يتم الترجمة..."):
             try:
