@@ -163,7 +163,7 @@ else:
 
 {input_text}"""
 
-        else:
+    else:
             prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
 {input_text}"""
