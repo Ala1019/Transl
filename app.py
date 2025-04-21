@@ -8,13 +8,10 @@ import os
 
 # SQLite utility functions
 DB_FILE = "translations.db"
+# Initialize DB
+init_db()
 
-def init_db():
-    # Import Excel translations ONCE
-import os
-import pandas as pd
-import sqlite3
-
+# ✅ Excel Import – this runs once to populate the DB from Excel
 if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
     df_excel = pd.read_excel("translations.xlsx")
     conn = sqlite3.connect(DB_FILE)
@@ -37,9 +34,14 @@ if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
     conn.commit()
     conn.close()
 
-    # Create flag to prevent future imports
+    # علامة لمنع التكرار في المستقبل
     with open("imported.flag", "w") as f:
         f.write("done")
+
+# Initialize DB
+init_db()
+
+def init_db():
 
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
