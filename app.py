@@ -55,6 +55,10 @@ def remove_duplicates():
     """)
     conn.commit()
     conn.close()
+    
+# ❗️ حذف ملف العلم لإعادة الاستيراد (مرة واحدة فقط)
+if os.path.exists("imported.flag"):
+    os.remove("imported.flag")
 
 # ✅ Excel Import – this runs once to populate the DB from Excel
 if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
@@ -81,9 +85,6 @@ if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
 
     with open("imported.flag", "w") as f:
         f.write("done")
-        if os.path.exists("imported.flag"):
-    os.remove("imported.flag")
-
 
 # Initialize DB
 init_db()
