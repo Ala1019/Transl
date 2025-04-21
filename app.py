@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import pandas as pd
 import sqlite3
@@ -69,6 +70,13 @@ st.title("📘 مترجمي الشخصي – SQLite")
 # Load and display previous translations
 st.subheader("🔎 أرشيف الترجمات")
 query = st.text_input("ابحث في الترجمات")
+st.subheader("🔎 أرشيف الترجمات")
+
+if st.button("🧽 إزالة التكرارات"):
+    remove_duplicates()
+    st.success("✔️ تم حذف التكرارات من قاعدة البيانات.")
+    st.rerun()
+
 
 df = load_translations()
 if query:
