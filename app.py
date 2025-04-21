@@ -10,6 +10,37 @@ import os
 DB_FILE = "translations.db"
 
 def init_db():
+    # Import Excel translations ONCE
+import os
+import pandas as pd
+import sqlite3
+
+if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
+    df_excel = pd.read_excel("translations.xlsx")
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    for _, row in df_excel.iterrows():
+        cursor.execute("""
+            INSERT INTO translations (title, source_text, style, model, translation, notes, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            row.get("title", "Untitled"),
+            row["source_text"],
+            row.get("style", ""),
+            row.get("model", ""),
+            row["translation"],
+            row.get("notes", ""),
+            row.get("status", "")
+        ))
+
+    conn.commit()
+    conn.close()
+
+    # Create flag to prevent future imports
+    with open("imported.flag", "w") as f:
+        f.write("done")
+
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("""
