@@ -131,7 +131,7 @@ if st.button("ترجم"):
     if not input_text.strip():
         st.warning("يرجى إدخال نص.")
     else:
-        if style == "أسلوبي الحقيقي":
+    if style == "أسلوبي الحقيقي":
     # 👇 تحميل كل الترجمات المتاحة لتعليم النموذج – بدون تجاوز الحد
     all_translations = load_translations().dropna(subset=["source_text", "translation"])
 
@@ -151,8 +151,7 @@ if st.button("ترجم"):
         examples += pair
         token_count += pair_tokens
 
-
-            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+    prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
 The following examples illustrate the user’s translation style:
 
