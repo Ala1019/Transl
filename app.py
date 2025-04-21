@@ -152,3 +152,12 @@ Now translate the following English text using the same style:
                 st.success("✅ الترجمة جاهزة")
             except Exception as e:
                 st.error(f"حدث خطأ: {e}")
+if "last_translation" in st.session_state:
+    st.subheader("📄 الترجمة الأخيرة:")
+    edited = st.text_area("حرر الترجمة إن شئت:", st.session_state["last_translation"], height=200)
+    notes = st.text_area("🗒️ ملاحظاتك:")
+    status = st.selectbox("⚖️ الحالة:", ["مسوّدة", "بحاجة تنقيح", "جيدة", "نهائية"])
+
+    if st.button("💾 احفظ الترجمة"):
+        save_translation(title or "Untitled", input_text, style, model, edited, notes, status)
+        st.success("📌 تم الحفظ في قاعدة البيانات.")
