@@ -51,6 +51,8 @@ This style is defined by:
 - Philosophical and reflective tone; avoids sensationalism and overstatement.
 - Sensitive to historical analogy, metaphorical layering, and the connotations of both source and target languages.
 - Avoids literal translation when it fails to preserve the author’s tone and subtext.
+- Avoid common errors and stylistic weaknesses in Arabic translation.
+Be mindful of frequent issues such as passive constructions when the agent is known, weak nominal structures like 'القيام بـ', vague wording, and overly literal phrases that distort the original tone.
 - Audience: highly literate Arabic readers.
 
 Translate the following English text into Arabic using this style:
