@@ -9,7 +9,7 @@ import os
 # SQLite utility functions
 DB_FILE = "translations.db"
 # Initialize DB
-init_db()
+def init_db()
 
 # ✅ Excel Import – this runs once to populate the DB from Excel
 if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
