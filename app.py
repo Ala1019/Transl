@@ -118,7 +118,7 @@ if st.button("ترجم"):
     if not input_text.strip():
         st.warning("يرجى إدخال نص.")
     else:
-if style == "أسلوبي الحقيقي":
+    if style == "أسلوبي الحقيقي":
     # 👇 تحميل ترجمات سابقة لتعليم النموذج
     examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
     examples = "\n\n".join(
