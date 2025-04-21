@@ -136,6 +136,7 @@ Now translate this new English text using the same style:
 
 {input_text}
 """
+
         else:
             prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
