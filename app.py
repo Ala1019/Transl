@@ -120,7 +120,7 @@ if st.button("ترجم"):
     else:
         if style == "أسلوبي الحقيقي":
             # 👇 تحميل ترجمات سابقة لتعليم النموذج
-            examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
+            examples_df = load_translations().dropna(subset=["source_text", "translation"]).sample(10)
             examples = "\n\n".join(
                 f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}"
                 for _, row in examples_df.iterrows()
