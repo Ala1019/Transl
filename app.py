@@ -81,6 +81,9 @@ if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
 
     with open("imported.flag", "w") as f:
         f.write("done")
+        if os.path.exists("imported.flag"):
+    os.remove("imported.flag")
+
 
 # Initialize DB
 init_db()
