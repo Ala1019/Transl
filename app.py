@@ -119,23 +119,20 @@ if st.button("ترجم"):
         st.warning("يرجى إدخال نص.")
     else:
         if style == "أسلوبي الحقيقي":
-            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+    # 👇 تحميل الترجمات السابقة من قاعدة البيانات
+    examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
+    examples = "\n\n".join(
+        f"English: {row.source_text.strip()}\nArabic: {row.translation.strip()}"
+        for _, row in examples_df.iterrows()
+    )
 
-This style is defined by:
+    prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
-- Elevated and classical Arabic language, free from modern journalistic clichés.
-- Preference for original Arabic syntax, beginning with the verb where natural.
-- Long, rhetorically rich sentences balanced by cadence and logic.
-- Imagery-driven narration: metaphor and simile are built progressively and end with poetic force.
-- Diction inspired by early 20th-century Arab stylists such as Taha Hussein, Mahmoud Shaker, and Butrus al-Bustani.
-- Philosophical and reflective tone; avoids sensationalism and overstatement.
-- Sensitive to historical analogy, metaphorical layering, and the connotations of both source and target languages.
-- Avoids literal translation when it fails to preserve the author’s tone and subtext.
-- Avoid common errors and stylistic weaknesses in Arabic translation.
-Be mindful of frequent issues such as passive constructions when the agent is known, weak nominal structures like 'القيام بـ', vague wording, and overly literal phrases that distort the original tone.
-- Audience: highly literate Arabic readers.
+The following examples illustrate the user's translation style:
 
-Translate the following English text into Arabic using this style:
+{examples}
+
+Now translate this new English text using the same style:
 
 {input_text}
 """
