@@ -118,26 +118,26 @@ if st.button("ترجم"):
     if not input_text.strip():
         st.warning("يرجى إدخال نص.")
     else:
-        if style == "أسلوبي الحقيقي":
-    # 👇 تحميل الترجمات السابقة من قاعدة البيانات
+if style == "أسلوبي الحقيقي":
+    # 👇 تحميل ترجمات سابقة لتعليم النموذج
     examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
     examples = "\n\n".join(
-        f"English: {row.source_text.strip()}\nArabic: {row.translation.strip()}"
+        f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}"
         for _, row in examples_df.iterrows()
     )
 
     prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
-The following examples illustrate the user's translation style:
+The following examples illustrate the user’s translation style:
 
 {examples}
 
-Now translate this new English text using the same style:
+Now translate the following English text using the same style:
 
-{input_text}"""
-
-        else:
-            prompt = f"""Translate the following English text into Arabic in the style of {style}:
+{input_text}
+"""
+else:
+    prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
 {input_text}"""
 
