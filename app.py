@@ -1,4 +1,3 @@
-
 import streamlit as st
 import pandas as pd
 import sqlite3
@@ -55,10 +54,6 @@ def remove_duplicates():
     """)
     conn.commit()
     conn.close()
-    
-# ❗️ حذف ملف العلم لإعادة الاستيراد (مرة واحدة فقط)
-if os.path.exists("imported.flag"):
-    os.remove("imported.flag")
 
 # ✅ Excel Import – this runs once to populate the DB from Excel
 if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
@@ -131,27 +126,27 @@ if st.button("ترجم"):
     if not input_text.strip():
         st.warning("يرجى إدخال نص.")
     else:
-    if style == "أسلوبي الحقيقي":
-    # 👇 تحميل كل الترجمات المتاحة لتعليم النموذج – بدون تجاوز الحد
-    all_translations = load_translations().dropna(subset=["source_text", "translation"])
+        if style == "أسلوبي الحقيقي":
+            # 👇 تحميل كل الترجمات المتاحة لتعليم النموذج – بدون تجاوز الحد
+            all_translations = load_translations().dropna(subset=["source_text", "translation"])
 
-    examples = ""
-    token_count = 0
-    max_tokens = 10000  # أو أقل حسب النموذج
+            examples = ""
+            token_count = 0
+            max_tokens = 10000
 
-    for _, row in all_translations.iterrows():
-        en = row["source_text"].strip()
-        ar = row["translation"].strip()
-        pair = f"English: {en}\nArabic: {ar}\n\n"
-        pair_tokens = len(pair.split())
+            for _, row in all_translations.iterrows():
+                en = row["source_text"].strip()
+                ar = row["translation"].strip()
+                pair = f"English: {en}\nArabic: {ar}\n\n"
+                pair_tokens = len(pair.split())
 
-        if token_count + pair_tokens > max_tokens:
-            break
+                if token_count + pair_tokens > max_tokens:
+                    break
 
-        examples += pair
-        token_count += pair_tokens
+                examples += pair
+                token_count += pair_tokens
 
-    prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
 The following examples illustrate the user’s translation style:
 
@@ -177,6 +172,7 @@ Now translate the following English text using the same style:
                 st.success("✅ الترجمة جاهزة")
             except Exception as e:
                 st.error(f"حدث خطأ: {e}")
+
 if "last_translation" in st.session_state:
     st.subheader("📄 الترجمة الأخيرة:")
     edited = st.text_area("حرر الترجمة إن شئت:", st.session_state["last_translation"], height=200)
