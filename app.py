@@ -118,16 +118,15 @@ if st.button("ترجم"):
     if not input_text.strip():
         st.warning("يرجى إدخال نص.")
     else:
-        
-    if style == "أسلوبي الحقيقي":
-    # 👇 تحميل ترجمات سابقة لتعليم النموذج
-    examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
-    examples = "\n\n".join(
-        f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}"
-        for _, row in examples_df.iterrows()
-    )
+        if style == "أسلوبي الحقيقي":
+            # 👇 تحميل ترجمات سابقة لتعليم النموذج
+            examples_df = load_translations().dropna(subset=["source_text", "translation"]).tail(10)
+            examples = "\n\n".join(
+                f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}"
+                for _, row in examples_df.iterrows()
+            )
 
-    prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
 The following examples illustrate the user’s translation style:
 
@@ -137,8 +136,8 @@ Now translate the following English text using the same style:
 
 {input_text}
 """
-else:
-    prompt = f"""Translate the following English text into Arabic in the style of {style}:
+        else:
+            prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
 {input_text}"""
 
@@ -153,13 +152,3 @@ else:
                 st.success("✅ الترجمة جاهزة")
             except Exception as e:
                 st.error(f"حدث خطأ: {e}")
-
-if "last_translation" in st.session_state:
-    st.subheader("📄 الترجمة الأخيرة:")
-    edited = st.text_area("حرر الترجمة إن شئت:", st.session_state["last_translation"], height=200)
-    notes = st.text_area("🗒️ ملاحظاتك:")
-    status = st.selectbox("⚖️ الحالة:", ["مسوّدة", "بحاجة تنقيح", "جيدة", "نهائية"])
-
-    if st.button("💾 احفظ الترجمة"):
-        save_translation(title or "Untitled", input_text, style, model, edited, notes, status)
-        st.success("📌 تم الحفظ في قاعدة البيانات.")
