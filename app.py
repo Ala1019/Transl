@@ -5,7 +5,6 @@ import openai
 import os
 import tiktoken
 
-
 # SQLite utility functions
 DB_FILE = "translations.db"
 
@@ -57,7 +56,7 @@ def remove_duplicates():
     conn.commit()
     conn.close()
 
-# ✅ Excel Import – this runs once to populate the DB from Excel
+# ✅ Excel Import
 if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
     df_excel = pd.read_excel("translations.xlsx")
     conn = sqlite3.connect(DB_FILE)
@@ -79,7 +78,6 @@ if not os.path.exists("imported.flag") and os.path.exists("translations.xlsx"):
 
     conn.commit()
     conn.close()
-
     with open("imported.flag", "w") as f:
         f.write("done")
 
@@ -90,14 +88,14 @@ init_db()
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # Streamlit UI
-st.set_page_config(page_title="مترجمي الشخصي", layout="wide", page_icon="📘")
-st.title("📘 مترجمي الشخصي – SQLite")
+st.set_page_config(page_title="مترجمي الشخصي", layout="wide", page_icon="\U0001F4D8")
+st.title("\U0001F4D8 مترجمي الشخصي – SQLite")
 
 # Load and display previous translations
-st.subheader("🔎 أرشيف الترجمات")
+st.subheader("\U0001F50E أرشيف الترجمات")
 query = st.text_input("ابحث في الترجمات")
 
-if st.button("🧽 إزالة التكرارات"):
+if st.button("\U0001F9FD إزالة التكرارات"):
     remove_duplicates()
     st.success("✔️ تم حذف التكرارات من قاعدة البيانات.")
     st.rerun()
@@ -107,10 +105,10 @@ if query:
     df = df[df.apply(lambda row: query.lower() in str(row).lower(), axis=1)]
 st.dataframe(df)
 
-if st.button("📤 صدّر قاعدة البيانات"):
+if st.button("\U0001F4E4 صدّر قاعدة البيانات"):
     with open("translations.db", "rb") as src:
         st.download_button(
-            label="📥 حمّل نسخة من قاعدة البيانات",
+            label="\U0001F4E5 حمّل نسخة من قاعدة البيانات",
             data=src,
             file_name="translations.db",
             mime="application/octet-stream"
@@ -119,7 +117,7 @@ if st.button("📤 صدّر قاعدة البيانات"):
 # Translation section
 st.subheader("✍️ ترجمة جديدة")
 
-title = st.text_input("🔖 العنوان")
+title = st.text_input("\U0001F516 العنوان")
 input_text = st.text_area("النص الإنكليزي", height=200)
 style = st.selectbox("اختر الأسلوب", ["Butrus al-Bustani", "al-Jahiz", "Mahmoud Shaker", "أسلوبي الشخصي", "أسلوبي الحقيقي"])
 model = st.selectbox("اختر النموذج", ["gpt-3.5-turbo", "gpt-4"], index=0)
@@ -129,26 +127,23 @@ if st.button("ترجم"):
         st.warning("يرجى إدخال نص.")
     else:
         if style == "أسلوبي الحقيقي":
-            import tiktoken  # ضعه في الأعلى إن لم يكن موجوداً
+            def get_token_count(text, model="gpt-3.5-turbo"):
+                encoding = tiktoken.encoding_for_model(model)
+                return len(encoding.encode(text))
 
-if style == "أسلوبي الحقيقي":
-    def get_token_count(text, model="gpt-3.5-turbo"):
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
+            max_tokens_for_examples = 2000
+            examples = ""
+            total_tokens = 0
 
-    max_tokens_for_examples = 2000  # نترك الباقي لترجمتك
-    examples = ""
-    total_tokens = 0
+            for _, row in load_translations().dropna(subset=["source_text", "translation"]).iterrows():
+                example = f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}\n\n"
+                example_tokens = get_token_count(example)
+                if total_tokens + example_tokens > max_tokens_for_examples:
+                    break
+                examples += example
+                total_tokens += example_tokens
 
-    for _, row in load_translations().dropna(subset=["source_text", "translation"]).iterrows():
-        example = f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}\n\n"
-        example_tokens = get_token_count(example)
-        if total_tokens + example_tokens > max_tokens_for_examples:
-            break
-        examples += example
-        total_tokens += example_tokens
-
-    prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
+            prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
 The following examples illustrate the user’s translation style:
 
@@ -158,12 +153,7 @@ Now translate the following English text using the same style:
 
 {input_text}
 """
-else:
-    prompt = f"""Translate the following English text into Arabic in the style of {style}:
-
-{input_text}"""
-
-    else:
+        else:
             prompt = f"""Translate the following English text into Arabic in the style of {style}:
 
 {input_text}"""
@@ -181,11 +171,11 @@ else:
                 st.error(f"حدث خطأ: {e}")
 
 if "last_translation" in st.session_state:
-    st.subheader("📄 الترجمة الأخيرة:")
+    st.subheader("\U0001F4C4 الترجمة الأخيرة:")
     edited = st.text_area("حرر الترجمة إن شئت:", st.session_state["last_translation"], height=200)
-    notes = st.text_area("🗒️ ملاحظاتك:")
+    notes = st.text_area("\U0001F5D2️ ملاحظاتك:")
     status = st.selectbox("⚖️ الحالة:", ["مسوّدة", "بحاجة تنقيح", "جيدة", "نهائية"])
 
-    if st.button("💾 احفظ الترجمة"):
+    if st.button("\U0001F4BE احفظ الترجمة"):
         save_translation(title or "Untitled", input_text, style, model, edited, notes, status)
-        st.success("📌 تم الحفظ في قاعدة البيانات.")
+        st.success("\U0001F4CC تم الحفظ في قاعدة البيانات.")
