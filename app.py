@@ -132,12 +132,25 @@ if st.button("ترجم"):
         st.warning("يرجى إدخال نص.")
     else:
         if style == "أسلوبي الحقيقي":
-            # 👇 تحميل ترجمات سابقة لتعليم النموذج
-            examples_df = load_translations().dropna(subset=["source_text", "translation"]).sample(10)
-            examples = "\n\n".join(
-                f"English: {row['source_text'].strip()}\nArabic: {row['translation'].strip()}"
-                for _, row in examples_df.iterrows()
-            )
+    # 👇 تحميل كل الترجمات المتاحة لتعليم النموذج – بدون تجاوز الحد
+    all_translations = load_translations().dropna(subset=["source_text", "translation"])
+
+    examples = ""
+    token_count = 0
+    max_tokens = 10000  # أو أقل حسب النموذج
+
+    for _, row in all_translations.iterrows():
+        en = row["source_text"].strip()
+        ar = row["translation"].strip()
+        pair = f"English: {en}\nArabic: {ar}\n\n"
+        pair_tokens = len(pair.split())
+
+        if token_count + pair_tokens > max_tokens:
+            break
+
+        examples += pair
+        token_count += pair_tokens
+
 
             prompt = f"""You are a professional translator tasked with rendering English texts into Arabic using the user’s personal literary style.
 
