@@ -106,6 +106,15 @@ if query:
     df = df[df.apply(lambda row: query.lower() in str(row).lower(), axis=1)]
 st.dataframe(df)
 
+if st.button("📤 صدّر قاعدة البيانات"):
+    with open("translations.db", "rb") as src:
+        st.download_button(
+            label="📥 حمّل نسخة من قاعدة البيانات",
+            data=src,
+            file_name="translations.db",
+            mime="application/octet-stream"
+        )
+
 # Translation section
 st.subheader("✍️ ترجمة جديدة")
 
@@ -161,12 +170,3 @@ if "last_translation" in st.session_state:
     if st.button("💾 احفظ الترجمة"):
         save_translation(title or "Untitled", input_text, style, model, edited, notes, status)
         st.success("📌 تم الحفظ في قاعدة البيانات.")
-        if st.button("📤 صدّر قاعدة البيانات"):
-    with open("translations.db", "rb") as src:
-        st.download_button(
-            label="📥 حمّل نسخة من قاعدة البيانات",
-            data=src,
-            file_name="translations.db",
-            mime="application/octet-stream"
-        )
-
